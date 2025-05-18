@@ -1,0 +1,71 @@
+use eduPlatformDB
+
+db.courses.insertMany([
+  {
+    title: "Java Programming",
+    instructor: "John Doe",
+    category: "Programming",
+    price: 150,
+    enrolled_students: 800,
+    is_published: true,
+    tags: ["beginner", "project-based"]
+  },
+  {
+    title: "Intro to Photoshop",
+    instructor: "Jane Smith",
+    category: "Design",
+    price: 0,
+    enrolled_students: 300,
+    is_published: true,
+    tags: ["beginner"]
+  },
+  {
+    title: "Digital Marketing Basics",
+    instructor: "Alice Brown",
+    category: "Business",
+    price: 120,
+    enrolled_students: 500,
+    is_published: false,
+    tags: ["marketing", "strategy"]
+  },
+  {
+    title: "Advanced CSS",
+    instructor: "John Doe",
+    category: "Design",
+    price: 90,
+    enrolled_students: 200,
+    is_published: true,
+    tags: ["responsive", "project-based"]
+  },
+  {
+    title: "Python for Data Science",
+    instructor: "Mike Green",
+    category: "Programming",
+    price: 0,
+    enrolled_students: 1000,
+    is_published: true,
+    tags: ["beginner", "data"]
+  }
+])
+
+db.courses.find({ is_published: true, category: "Programming" })
+db.courses.find({ price: 0, tags: "beginner" })
+db.courses.find({ enrolled_students: { $gt: 500 } })
+db.courses.countDocuments({ instructor: "John Doe" })
+
+db.courses.updateMany(
+  { category: "Design" },
+  [{ $set: { price: { $multiply: ["$price", 1.2] } } }]
+)
+db.courses.updateMany(
+  { enrolled_students: { $lt: 10 } },
+  { $set: { is_published: false } }
+)
+
+db.courses.aggregate([
+  { $group: { _id: "$category", count: { $sum: 1 } } }
+])
+db.courses.aggregate([
+  { $match: { category: "Business" } },
+  { $group: { _id: null, avg_price: { $avg: "$price" } } }
+])
